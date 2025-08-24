@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Karakter Sayacı - Kaan Kayserili</title>
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <link rel="stylesheet" href="../styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <style>
+    body {
+      padding: 2rem;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: calc(100vh - 70px);
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      height: 200px;
+      padding: 1rem;
+      font-size: 1rem;
+      box-sizing: border-box;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .counter {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #fff;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="../index.html">KaanKayserili.com</a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item"><a href="../about.html" class="nav-link">Hakkımda</a></li>
+        <li class="nav-item"><a href="../articles.html" class="nav-link">Yazılarım</a></li>
+        <li class="nav-item"><a href="../index.html#projects" class="nav-link">Projeler</a></li>
+        <li class="nav-item"><a href="applications.html" class="nav-link active">Uygulamalar</a></li>
+        <li class="nav-item"><a href="../index.html#kkworld" class="nav-link"><i class="fas fa-globe"></i></a></li>
+        <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+  <main>
+    <h1>Karakter Sayıcı</h1>
+    <textarea id="textInput" placeholder="Yazınız..." oninput="countCharacters()"></textarea>
+    <div class="counter">
+      Toplam karakter sayısı: <span id="charCount">0</span>
+    </div>
+
+    <script>
+      function countCharacters() {
+        const text = document.getElementById("textInput").value;
+        const count = text.length;
+        document.getElementById("charCount").textContent = count;
+      }
+    </script>
+  </main>
+
+</body>
+
+</html>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ne Yesem? - Kaan Kayserili</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+  <link rel="stylesheet" href="../styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#ff6101;
+      --bg2:#ff2301a4;
+      --bg3:#fc2201;
+
+      --panel:#0b1f14f2;        
+      --ink:#f8fafc;            
+      --muted:#cbd5e1;          
+      --accent:#ff6101;         
+      --accent-2:#ff2301a4;       
+      --ring:#Fd8010;           
+    }
+
+    *{ box-sizing:border-box }
+    html, body { height:100% }
+
+    body{
+      margin:0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color: var(--ink);
+      
+      background: radial-gradient(1200px 800px at 20% 10%, var(--bg3), transparent 60%),
+                  linear-gradient(135deg, var(--bg1) 0%, var(--bg2) 50%, #ff6101 100%);
+      display:grid;
+      place-items:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(720px, 100%);
+      background: var(--panel);
+      border: 1px solid #4c1212a2;
+      backdrop-filter: blur(6px);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(195, 11, 11, 0.25), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+
+    h1{
+      margin:0 0 18px;
+      font-size: clamp(24px, 3.6vw, 34px);
+      line-height: 1.15;
+      letter-spacing:.2px;
+      background: linear-gradient(90deg, #ff2301a4, #ff6101, #Fc2101);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color: transparent;
+      text-align:center;
+    }
+
+    p.lead{
+      margin: 0 0 22px;
+      color: var(--muted);
+      text-align:center;
+    }
+
+    
+    .controls{
+      display:flex;
+      align-items:center;
+      justify-content:center; 
+      gap: 12px;
+      flex-wrap: wrap;         
+      margin: 12px auto 8px;
+    }
+
+    label{
+      font-weight:600;
+      color: #d1fae5;
+      letter-spacing:.2px;
+    }
+
+    select{
+      appearance:none;
+      background:
+        linear-gradient(180deg, #3b0f0f, #2f0c0c) padding-box,
+        linear-gradient(90deg, #531414, #ff6101) border-box;
+      color: var(--ink);
+      border: 1px solid transparent;
+      border-radius: 12px;
+      padding: 10px 36px 10px 12px;
+      min-width: 180px;
+      font: inherit;
+      outline: none;
+      transition: box-shadow .15s ease, transform .05s ease;
+      position: relative;
+    }
+    
+    select{
+      background-image:
+        linear-gradient(180deg, #3b0f0f, #2f0c0c),
+        linear-gradient(90deg, #531414, #ff6101),
+        radial-gradient(currentColor 35%, transparent 36%);
+      background-repeat: no-repeat, no-repeat, no-repeat;
+      background-size:
+        calc(100% - 2px) calc(100% - 2px),
+        100% 100%,
+        8px 8px;
+      background-position:
+        1px 1px,
+        0 0,
+        right 12px center;
+    }
+    select:focus{
+      box-shadow: 0 0 0 3px var(--ring);
+    }
+    select:active{ transform: translateY(1px) }
+
+    select, option {
+  font-family: 'Inter', sans-serif; 
+  font-size: 15px;
+}
+
+
+option {
+  background-color: #3b0f0f;
+  color: #fcf8f8;          
+  padding: 8px 12px;
+}
+
+
+option:hover {
+  background-color: #531414; 
+  color: #f7bbbb;
+}
+
+    button{
+      cursor:pointer;
+      font: inherit; font-weight:700;
+      color: #2e0505;
+      background: linear-gradient(90deg, #ff2301a4, #ff6101, #Fc2101);
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      box-shadow: 0 6px 18px rgba(197, 34, 34, 0.35);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+    }
+    button:hover{ filter: brightness(1.05); box-shadow: 0 10px 24px rgba(197, 34, 34, 0.45) }
+    button:active{ transform: translateY(1px) }
+    button:focus-visible{ outline: 3px solid var(--ring); outline-offset: 2px }
+
+    #result{
+      margin-top: 18px;
+      font-size: clamp(18px, 2.6vw, 24px);
+      font-weight: 700;
+      color: #f7bbbb;
+      text-align:center;
+      min-height: 1.6em;
+    }
+
+    
+    @media (max-width: 420px){
+      .controls{ gap: 10px }
+      select{ min-width: 160px }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="../index.html">KaanKayserili.com</a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item"><a href="../about.html" class="nav-link">Hakkımda</a></li>
+        <li class="nav-item"><a href="../articles.html" class="nav-link">Yazılarım</a></li>
+        <li class="nav-item"><a href="../index.html#projects" class="nav-link">Projeler</a></li>
+        <li class="nav-item"><a href="applications.html" class="nav-link active">Uygulamalar</a></li>
+        <li class="nav-item"><a href="../index.html#kkworld" class="nav-link"><i class="fas fa-globe"></i></a></li>
+        <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="card" role="main">
+    <h1>Ne Yemek Yapsam?</h1>
+    <p class="lead">Öğünü seç, sana rastgele bir öneri yapayım.</p>
+
+    
+    <div class="controls" aria-label="Öğün seçimi">
+      <label for="mealType">Öğün Seç:</label>
+      <select id="mealType" name="mealType">
+        <option value="kahvaltı">Kahvaltı</option>
+        <option value="öğle">Öğle</option>
+        <option value="akşam">Akşam</option>
+        <option value="tatlı">Tatlı</option>
+      </select>
+      <button id="chooseBtn" type="button">Ne Yesem?</button>
+    </div>
+
+    <div id="result" aria-live="polite"></div>
+  </main>
+
+  <script>
+    let foodsData = {
+  "kahvaltı": [
+    "Menemen","Sucuklu Yumurta","Sahanda Yumurta","Omlet","Peynir Tabağı","Zeytin Tabağı","Bal-Kaymak","Simit","Açma","Poğaça",
+    "Börek","Pisi","Gözleme","Krep","Pancake","Waffle","Reçel Çeşitleri","Tereyağlı Ekmek","Haşlanmış Yumurta","Sosisli Yumurta",
+    "Pastırmalı Yumurta","Kaşarlı Omlet","Mantarlı Omlet","Sebzeli Omlet","Mıhlama","Kuymak","Çılbır","Yoğurtlu Yumurta","Granola",
+    "Yulaf Ezmesi","Sütlü Mısır Gevreği","Kahvaltılık Gevrek","Sahanda Sucuk","Kavurmalı Yumurta","Peynirli Börek","Patatesli Börek","Ispanaklı Börek","Kıymalı Börek",
+    "Kıymalı Pide","Kaşarlı Pide","Lahmacun","Katmer","Bazlama","Pişi","Yumurtalı Ekmek","Menemenli Tost","Kaşarlı Tost","Karışık Tost",
+    "Ayvalık Tostu","Soğuk Sandviç","Sosisli Sandviç","Avokadolu Tost","Nutellalı Krep","Çörek","Sütlü Kahvaltı Tabağı","Sucuklu Tost","Kaşarlı Simit","Tahıllı Ekmek",
+    "Çavdar Ekmeği","Tam Buğday Ekmeği","Keten Tohumlu Ekmek","Yoğurt","Meyveli Yoğurt","Smoothie","Muzlu Süt","Çikolatalı Süt","Çay","Kahve","Türk Kahvesi",
+    "Latte","Cappuccino","Espresso","Americano","Salatalık","Domates","Biber","Roka","Maydanoz","Nane","Dereotu","Kuru Kayısı","İncir","Ceviz","Fındık",
+    "Badem","Kuru Üzüm","Çökelek","Lor Peyniri","Ezine Peyniri","Beyaz Peynir","Kaşar Peyniri","Çerkez Peyniri","Hellim","Labne","Süzme Peynir","Krem Peynir"
+  ],
+  "öğle": [
+    "Izgara Tavuk","Köfte","Izgara Balık","Mantı","Döner","Lahmacun","Pide","Kuru Fasulye","Nohut","Mercimek Çorbası",
+    "Ezogelin Çorbası","Tarhana Çorbası","Yayla Çorbası","Tavuk Çorbası","İskender","Beyti Kebabı","Adana Kebabı","Urfa Kebabı","Ciğer","Patlıcan Kebabı",
+    "Ali Nazik","Tas Kebabı","Et Sote","Tavuk Sote","Sebze Güveç","Taze Fasulye","Bamya","Enginar","Karnabahar Graten","Musakka",
+    "Kuru Patlıcan Dolması","Biber Dolması","Kaburga Dolması","Yaprak Sarma","Karnıyarık","Mücver","Zeytinyağlı Fasulye","Zeytinyağlı Enginar","İmam Bayıldı","Zeytinyağlı Yaprak Sarma",
+    "Balık Ekmek","Midye Tava","Midye Dolma","Kalamar Tava","Karides Güveç","Çoban Salata","Mevsim Salata","Ton Balıklı Salata","Tavuklu Salata","Kinoa Salata",
+    "Bulgur Pilavı","Pirinç Pilavı","Şehriyeli Pilav","Nohutlu Pilav","Tavuklu Pilav","Etli Pilav","Makarna","Fırın Makarna","Spagetti Bolonez","Fettucini Alfredo",
+    "Penne Arabiatta","Kremalı Makarna","Mantarlı Makarna","Lazanya","Pizza Margherita","Pizza Pepperoni","Pizza Karışık","Pizza Dört Peynirli","Hamburger","Cheeseburger",
+    "Tavuk Burger","Balık Burger","Patates Kızartması","Soğan Halkası","Çıtır Tavuk","Hot Dog","Sandviç","Club Sandwich","Baget Ekmek Arası","Sosisli",
+    "Wrap","Burrito","Quesadilla","Taco","Şnitzel","Izgara Somon","Levrek Izgara","Çupra Izgara","Kalkan Izgara","Hamsi Tava",
+    "Palamut Izgara","Çipura Tava","Alabalık","Hamsi Buğulama","Sebzeli Noodle","Etli Noodle","Tavuklu Noodle","Ramen","Sushi","Tempura"
+  ],
+  "akşam": [
+    "Etli Güveç","Tavuklu Güveç","Sebzeli Güveç","Izgara Et","Kuzu Pirzola","Dana Biftek","Bonfile","Antrikot","Tandır","Kuzu İncik",
+    "Dana Rosto","Fırında Tavuk","Kremalı Tavuk","Körili Tavuk","Tavuk Kanat","Fırında Balık","Levrek Buğulama","Çipura Fırın","Somon Fırın","Alabalık Fırın",
+    "Balık Çorbası","Karides Izgara","Midye Güveç","Kalamar Izgara","Paella","Risotto","Kremalı Risotto","Mantar Risotto","Deniz Mahsullü Risotto","Etli Risotto",
+    "Sebzeli Risotto","Etli Noodle","Sebzeli Noodle","Tavuklu Noodle","Makarna Bolonez","Lazanya","Fırında Sebze","Patates Graten","Fırında Karnabahar","Brokoli Graten",
+    "Sebzeli Kiş","Kabak Mücver","Patlıcan Musakka","Etli Dolma","Sebzeli Dolma","Zeytinyağlı Dolma","Kuru Fasulye","Nohut","Mercimek Yemeği","Bulgur Pilavı",
+    "Pirinç Pilavı","Kuskus","Şehriye Pilavı","Mantı","İçli Köfte","Çiğ Köfte","Kısır","Tabbouleh","Humus","Baba Ganuş",
+    "Falafel","Fattoush","Şakşuka","Patates Salatası","Rus Salatası","Kısır","Ezme","Haydari","Cacık","Yoğurt",
+    "Zeytinyağlı Enginar","Zeytinyağlı Barbunya","Zeytinyağlı Pırasa","Zeytinyağlı Bakla","Sebze Çorbası","Mercimek Çorbası","Yayla Çorbası","Domates Çorbası","Mantar Çorbası","Balık Çorbası",
+    "Tarhana Çorbası","İşkembe Çorbası","Kelle Paça","Beyran Çorbası","Tavuk Çorbası","Arnavut Ciğeri","Kuzu Kavurma","Dana Kavurma","Sac Kavurma","Alinazik",
+    "İskender","Beyti Kebabı","Adana Kebabı","Urfa Kebabı","Ciğer Kebabı","Patlıcan Kebabı","Kuzu Şiş","Tavuk Şiş","Et Şiş","Çöp Şiş"
+  ],
+  "tatlı": [
+    "Baklava","Fıstıklı Baklava","Cevizli Baklava","Sütlaç","Kazandibi","Profiterol","Ekler","Tiramisu","Panna Cotta","Cheesecake",
+    "Limonlu Cheesecake","Frambuazlı Cheesecake","Çilekli Cheesecake","Brownie","Cookie","Kurabiye","Islak Kek","Mozaik Pasta","Yaş Pasta","Krem Karamel",
+    "Krem Şanti","Dondurma","Çikolatalı Dondurma","Vanilyalı Dondurma","Çilekli Dondurma","Karpuzlu Dondurma","Kavunlu Dondurma","Fıstıklı Dondurma","Maraş Dondurması","Külah Dondurma",
+    "Kup Griye","Puding","Muzlu Puding","Çikolatalı Puding","Vanilyalı Puding","Çilekli Puding","Supangle","Tavuk Göğsü","Keşkül","Aşure",
+    "Revani","Şekerpare","Tulumba","Halka Tatlısı","Lokma","Künefe","Katmer","Nevzine","Höşmerim","İrmik Helvası",
+    "Un Helvası","Cevizli Helva","Susam Helvası","Pişmaniye","Macaron","Cupcake","Magnolia","Trileçe","Sufle","Volkan Kek",
+    "Churros","Pavlova","Donut","Jöle","Waffle","Pancake","Krep","Meyve Salatası","Çikolata Fondü","Marshmallow",
+    "Krokan","Fudge","Karamelli Tatlı","Sakızlı Muhallebi","Sütlü Nuriye","Bici Bici","Karsambaç","Dondurmalı İrmik Helvası","Meyveli Tart","Çikolatalı Tart",
+    "Elmalı Turta","Ayvalı Tatlı","Kabak Tatlısı","İncir Tatlısı","Kayısı Tatlısı","Vişneli Tatlı","Kirazlı Tatlı","Erikli Tatlı","Portakallı Kek","Limonlu Kek",
+    "Çilekli Kek","Meyveli Kek","Çikolatalı Kek","Meyve Parfe","Meyveli Parfe","Dondurmalı Kup","Meyveli Kup","Çikolatalı Kup","Kadayıf","Fırın Sütlaç"
+  ]
+    };
+
+    fetch("foods.json")
+      .then(response => response.json())
+      .then(data => {
+        foodsData = data;
+      })
+      .catch(error => {
+        console.error("JSON yüklenemedi:", error);
+      });
+
+    document.getElementById("chooseBtn").addEventListener("click", () => {
+      const mealType = document.getElementById("mealType").value;
+      if (foodsData[mealType]) {
+        const list = foodsData[mealType];
+        const randomFood = list[Math.floor(Math.random() * list.length)];
+        document.getElementById("result").innerText = randomFood;
+      } else {
+        document.getElementById("result").innerText = "Veri bulunamadı!";
+      }
+    });
+  </script>
+</body>
+</html>

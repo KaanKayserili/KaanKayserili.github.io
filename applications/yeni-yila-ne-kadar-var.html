@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Geri Sayım Aracı - Kaan Kayserili</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <link rel="stylesheet" href="../styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    main {
+      display: flex;
+      background-color: #333;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      border-radius: 25px;
+      width: 70%;
+      margin-left: 15%;
+      margin-top: 100px;
+      padding-bottom: 5%;
+      padding-top: 5%;
+    }
+
+    h1 {
+      font-size: 3rem;
+    }
+
+    .countdown {
+      font-size: 3rem;
+      margin-top: 20px;
+    }
+
+    .countdown span {
+      display: inline-block;
+      min-width: 80px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="../index.html">KaanKayserili.com</a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item"><a href="../about.html" class="nav-link">Hakkımda</a></li>
+        <li class="nav-item"><a href="../articles.html" class="nav-link">Yazılarım</a></li>
+        <li class="nav-item"><a href="../index.html#projects" class="nav-link">Projeler</a></li>
+        <li class="nav-item"><a href="applications.html" class="nav-link active">Uygulamalar</a></li>
+        <li class="nav-item"><a href="../index.html#kkworld" class="nav-link"><i class="fas fa-globe"></i></a></li>
+        <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Yeni Yıla Geri Sayım</h1>
+    <div class="countdown">
+      <span id="days">00</span>gün  
+      <span id="hours">00</span>saat  
+      <span id="minutes">00</span>dk  
+      <span id="seconds">00</span>sn  
+    </div>
+
+    <script>
+      const currentYear = new Date().getFullYear();
+
+      const targetDate = new Date(`${currentYear}-12-31T23:59:59`).getTime();
+
+      console.log(new Date(targetDate));
+
+      const updateCountdown = () => {
+        const now = new Date().getTime();
+        const distance = targetDate - now;
+
+        if (distance <= 0) {
+          document.querySelector('.countdown').innerHTML = "Süre doldu!";
+          clearInterval(timer);
+          return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("days").textContent = String(days).padStart(2, '0');
+        document.getElementById("hours").textContent = String(hours).padStart(2, '0');
+        document.getElementById("minutes").textContent = String(minutes).padStart(2, '0');
+        document.getElementById("seconds").textContent = String(seconds).padStart(2, '0');
+      };
+
+      updateCountdown();
+      const timer = setInterval(updateCountdown, 1000);
+    </script>
+  </main>
+</body>
+
+</html>

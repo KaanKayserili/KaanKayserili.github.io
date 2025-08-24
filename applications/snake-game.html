@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="../styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <title>Snake Game - Kaan Kayserili</title>
+  <style>
+    :root {
+      --bg: #111;
+      --panel: #444;
+      --ink: whitesmoke;
+      --muted: lightgray;  
+      --accent: green; 
+      --accent-2: lightgreen; 
+      --danger: #ff6101;   
+      --tile: 24px;
+    }
+    * { box-sizing: border-box; }
+    html, body { height: 100vh; }
+    body {
+      margin: 0;
+      background-color:#333 ;
+      color: var(--ink);
+      font: 16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      display: grid;
+      place-items: center;
+      padding: 16px;
+    }
+
+    .game-wrap {
+      width: 65vh;
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      gap: 12px;
+      margin-top: 80px;
+    }
+
+    .card {
+      background: color-mix(in oklab, var(--panel) 92%, black 8%);
+      border: 1px solid color-mix(in oklab, var(--panel) 85%, white 15%);
+      border-radius: 18px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.033);
+      padding: 14px 16px;
+    }
+
+    .hud { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .hud .title { font-weight: 700; letter-spacing: .2px; }
+    .metrics { display: flex; gap: 12px; font-weight: 600; }
+    .badge { padding: 6px 10px; border-radius: 999px; background: #444; border: 1px solid #444; color: var(--ink); }
+    .badge small { color: var(--muted); margin-left: 6px; font-weight: 500; }
+
+    canvas { display: block; width: 100%; height: 65vh; image-rendering: pixelated; border-radius: 14px; background: #111; border: 1px solid #333; }
+
+    .controls { display: grid; grid-template-columns: 1fr; gap: 10px; align-items: center; }
+    .row { display:flex; gap:10px; justify-content:center; }
+
+    .btn {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none; cursor: pointer;
+      border: 1px solid #2a3a63; color: var(--ink);
+      background: linear-gradient(180deg, #0f1a35, #0b1228);
+      padding: 12px 14px; border-radius: 14px; font-weight: 700;
+      box-shadow: 0 6px 18px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.03);
+      min-width: 60px; text-align: center;
+    }
+    .btn:active { transform: translateY(1px); }
+    .btn.accent { background: linear-gradient(180deg, var(--accent), var(--accent-2)); border-color: color-mix(in oklab, var(--accent-2) 80%, black 20%); color: #041b0d; }
+    .btn.danger { background: linear-gradient(180deg, #ff6101, #ff6101); border-color: #ff6101; color: #ff6101; }
+
+    .dpad { width: 100%; max-width: 340px; margin: 0 auto; }
+    .dpad-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 64px); gap: 10px;
+      justify-items: center; align-items: center;
+    }
+    .dpad .btn { width: 100%; height: 64px; display: grid; place-items: center; font-size: 18px; }
+    .dpad .empty { visibility: hidden; }
+
+    .footer { text-align: center; color: var(--muted); font-size: 12px; }
+
+    @media (min-width: 640px) {
+      .controls { grid-template-columns: 1fr 1fr; }
+      .dpad { justify-self: end; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="index.html">KaanKayserili.com</a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item"><a href="../about.html" class="nav-link">Hakkımda</a></li>
+        <li class="nav-item"><a href="../articles.html" class="nav-link">Yazılarım</a></li>
+        <li class="nav-item"><a href="../index.html#projects" class="nav-link">Projeler</a></li>
+        <li class="nav-item"><a href="../applications/applications.html" class="nav-link">Uygulamalar</a></li>
+        <li class="nav-item"><a href="../index.html#kkworld" class="nav-link"><i class="fas fa-globe"></i></a></li>
+        <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <div class="game-wrap">
+    <div class="card hud">
+      <div class="title">Snake Game</div>
+      <div class="metrics">
+        <div class="badge">Skor: <span id="score">0</span></div>
+        <div class="badge">En İyi: <span id="hiscore">0</span></div>
+        <div class="badge"><span id="status">Hazır</span><small id="speed">Hız x1.0</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <canvas id="board" width="480" height="360" aria-label="Yılan oyun alanı" role="img"></canvas>
+    </div>
+
+  </div>
+
+  <script>
+    const TILE = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--tile')) || 24;
+    const COLS = 20;
+    const ROWS = 20;
+    const INITIAL_SPEED_MS = 140; 
+    const SPEEDUP_EVERY = 5; 
+    const SPEEDUP_FACTOR = 0.90;
+
+    const canvas = document.getElementById('board');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const hiEl = document.getElementById('hiscore');
+    const statusEl = document.getElementById('status');
+    const speedEl = document.getElementById('speed');
+    const startBtn = document.getElementById('btn-start');
+    const restartBtn = document.getElementById('btn-restart');
+
+    
+    function resizeCanvas() {
+      const ideal = Math.min(canvas.clientWidth, canvas.clientHeight || canvas.clientWidth);
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = COLS * TILE * scale;
+      canvas.height = ROWS * TILE * scale;
+      ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    }
+    resizeCanvas();
+    addEventListener('resize', resizeCanvas);
+
+    let snake, dir, nextDir, food, score, hiscore, stepMs, running, lastTime, acc;
+
+    function resetGame() {
+      snake = [ {x: Math.floor(COLS/2), y: Math.floor(ROWS/2)}, {x: Math.floor(COLS/2)-1, y: Math.floor(ROWS/2)} ];
+      dir = {x: 1, y: 0};
+      nextDir = dir;
+      score = 0;
+      stepMs = INITIAL_SPEED_MS;
+      running = false;
+      lastTime = 0; acc = 0;
+      placeFood();
+      updateHUD();
+      draw();
+    }
+
+    function loadHi() {
+      const v = Number(localStorage.getItem('snake_hiscore') || 0);
+      hiscore = Number.isFinite(v) ? v : 0;
+      hiEl.textContent = hiscore;
+    }
+
+    function saveHi() {
+      if (score > hiscore) {
+        hiscore = score; hiEl.textContent = hiscore;
+        localStorage.setItem('snake_hiscore', String(hiscore));
+      }
+    }
+
+    function updateHUD() {
+      scoreEl.textContent = score;
+      speedEl.textContent = `Hız x${(INITIAL_SPEED_MS/stepMs).toFixed(1)}`;
+      statusEl.textContent = running ? 'Oynanıyor' : 'Duraklatıldı';
+    }
+
+    function placeFood() {
+      while (true) {
+        const x = Math.floor(Math.random()*COLS);
+        const y = Math.floor(Math.random()*ROWS);
+        if (!snake.some(s => s.x===x && s.y===y)) { food = {x,y}; break; }
+      }
+    }
+
+    function setDirection(nx, ny) {
+      // ters yöne anında dönmeyi engellemek için yaptım.
+      if (nx === -dir.x && ny === -dir.y) return;
+      nextDir = {x:nx, y:ny};
+    }
+
+    const KEYMAP = {
+      ArrowLeft:  [-1,0], ArrowUp:[0,-1], ArrowRight:[1,0], ArrowDown:[0,1],
+      a: [-1,0], w: [0,-1], d: [1,0], s: [0,1],
+      A: [-1,0], W: [0,-1], D: [1,0], S: [0,1]
+    };
+    addEventListener('keydown', (e) => {
+      if (KEYMAP[e.key]) { const [x,y] = KEYMAP[e.key]; setDirection(x,y); }
+      if (e.key === ' ' || e.key === 'Enter') toggleRun();
+      if ((e.key === 'r' || e.key === 'R')) restart();
+    });
+
+    document.querySelectorAll('[data-dir]').forEach(btn => {
+      const dirName = btn.dataset.dir;
+      const map = { up:[0,-1], down:[0,1], left:[-1,0], right:[1,0] };
+      const handler = (ev)=>{ ev.preventDefault(); const [x,y]=map[dirName]; setDirection(x,y); };
+      btn.addEventListener('click', handler);
+      btn.addEventListener('touchstart', handler, {passive:false});
+    });
+
+    startBtn.addEventListener('click', toggleRun);
+    restartBtn.addEventListener('click', restart);
+
+    function toggleRun(){ running = !running; updateHUD(); if (running) requestAnimationFrame(loop); }
+    function restart(){ saveHi(); resetGame(); running = true; updateHUD(); requestAnimationFrame(loop); }
+
+    let touchStart = null;
+    canvas.addEventListener('touchstart', (e)=>{
+      if (e.touches.length===1){ touchStart = {x:e.touches[0].clientX, y:e.touches[0].clientY}; }
+    }, {passive:true});
+    canvas.addEventListener('touchend', (e)=>{
+      if (!touchStart) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStart.x; const dy = t.clientY - touchStart.y;
+      const ax = Math.abs(dx), ay = Math.abs(dy); const TH = 24; 
+      if (Math.max(ax, ay) > TH){
+        if (ax>ay) setDirection(Math.sign(dx), 0); else setDirection(0, Math.sign(dy));
+      } else {
+        toggleRun(); 
+      }
+      touchStart = null;
+    }, {passive:true});
+
+    function loop(ts){
+      if (!running) return;
+      if (!lastTime) lastTime = ts;
+      const dt = ts - lastTime; lastTime = ts; acc += dt;
+      while (acc >= stepMs){ step(); acc -= stepMs; }
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    function step(){
+
+      dir = nextDir;
+      const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+
+      if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS){ gameOver(); return; }
+
+      if (snake.some((s,i)=> i>0 && s.x===head.x && s.y===head.y)){ gameOver(); return; }
+
+      snake.unshift(head);
+
+      if (head.x === food.x && head.y === food.y){
+        score++;
+        if (score % SPEEDUP_EVERY === 0) stepMs = Math.max(60, stepMs * SPEEDUP_FACTOR);
+        placeFood();
+        updateHUD();
+      } else {
+        snake.pop();
+      }
+    }
+
+    function gameOver(){
+      running = false; updateHUD(); saveHi();
+      statusEl.textContent = 'Bitti';
+      if (navigator.vibrate) navigator.vibrate(140);
+    }
+
+    function draw(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      for (let y=0;y<ROWS;y++){
+        for (let x=0;x<COLS;x++){
+          const odd = (x+y)%2===1;
+          ctx.fillStyle = odd? '#111' : '#333';
+          ctx.fillRect(x*TILE, y*TILE, TILE, TILE);
+        }
+      }
+
+    
+      const g = ctx.createRadialGradient((food.x+0.5)*TILE, (food.y+0.5)*TILE, 2, (food.x+0.5)*TILE, (food.y+0.5)*TILE, TILE*0.7);
+      g.addColorStop(0, '#ff6101');
+      g.addColorStop(1, '#ff6101');
+      ctx.fillStyle = g;
+      roundRect((food.x)*TILE+3, (food.y)*TILE+3, TILE-6, TILE-6, 6);
+
+
+      snake.forEach((seg, i)=>{
+        const isHead = i===0; const r = isHead? 8 : 6;
+        ctx.fillStyle = isHead? '#007000' : '#007000';
+        roundRect(seg.x*TILE+2, seg.y*TILE+2, TILE-4, TILE-4, r);
+        if (isHead){ 
+          ctx.fillStyle = '#00700';
+          const ex = seg.x*TILE + TILE/2 + (dir.x*3);
+          const ey = seg.y*TILE + TILE/2 + (dir.y*3);
+          ctx.beginPath(); ctx.arc(ex-4, ey-4, 2, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(ex+4, ey+4, 2, 0, Math.PI*2); ctx.fill();
+        }
+      });
+
+      if (!running && score>=0 && statusEl.textContent!== 'Oynanıyor' && statusEl.textContent!== 'Hazır'){
+        ctx.fillStyle = 'rgba(0,0,0,.45)';
+        ctx.fillRect(0, canvas.height/2 - 40, canvas.width, 80);
+        ctx.fillStyle = '#e5e7eb';
+        ctx.textAlign = 'center';
+        ctx.font = '700 28px system-ui';
+        ctx.fillText('Oyun Bitti', canvas.width/2, canvas.height/2 - 4);
+        ctx.font = '500 16px system-ui';
+        ctx.fillText('Yeniden başlatmak için butona basın (R)', canvas.width/2, canvas.height/2 + 20);
+      }
+    }
+
+    function roundRect(x,y,w,h,r){
+      const rr = Math.min(r, w/2, h/2);
+      ctx.beginPath();
+      ctx.moveTo(x+rr, y);
+      ctx.arcTo(x+w, y, x+w, y+h, rr);
+      ctx.arcTo(x+w, y+h, x, y+h, rr);
+      ctx.arcTo(x, y+h, x, y, rr);
+      ctx.arcTo(x, y, x+w, y, rr);
+      ctx.closePath(); ctx.fill();
+    }
+
+    loadHi();
+    resetGame();
+  </script>
+</body>
+</html>
