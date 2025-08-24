@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Geri Sayım Aracı - Kaan Kayserili</title>
+  <style>
+    body {
+      background-color: #111;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 80px;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: calc(100vh - 70px);
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    input {
+      padding: 10px;
+      width: 60px;
+      margin: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .countdown {
+      font-size: 3rem;
+      font-variant-numeric: tabular-nums;
+    }
+  </style>
+  <link rel="stylesheet" href="../styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="nav-logo">
+        <a href="index.html">KaanKayserili.com</a>
+      </div>
+      <ul class="nav-menu">
+        <li class="nav-item"><a href="../index.html#home" class="nav-link">Ana Sayfa</a></li>
+        <li class="nav-item"><a href="../about.html" class="nav-link">Hakkımda</a></li>
+        <li class="nav-item"><a href="../articles.html" class="nav-link">Yazılarım</a></li>
+        <li class="nav-item"><a href="../index.html#projects" class="nav-link">Projeler</a></li>
+        <li class="nav-item"><a href="../applications/applications.html" class="nav-link">Uygulamalar</a></li>
+        <li class="nav-item"><a href="../index.html#kkworld" class="nav-link"><i class="fas fa-globe"></i></a></li>
+        <li class="nav-item"><a href="../index.html#contact" class="nav-link">İletişim</a></li>
+      </ul>
+      <div class="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Geri Sayım Başlat</h1>
+    <div class="countdown" id="display">00:00:00:000</div>
+    <div>
+      <label>Saat:</label>
+      <input type="number" id="hoursInput" min="0" value="0">
+      <label>Dakika:</label>
+      <input type="number" id="minutesInput" min="0" value="0">
+      <label>Saniye:</label>
+      <input type="number" id="secondsInput" min="0" max="59" value="5">
+    </div>
+
+    <button onclick="startCountdown()">Başlat</button>
+  </main>
+
+  <script>
+    let timer;
+    let endTime;
+
+    function startCountdown() {
+      clearInterval(timer);
+
+      const hours = parseInt(document.getElementById('hoursInput').value) || 0;
+      const minutes = parseInt(document.getElementById('minutesInput').value) || 0;
+      const seconds = parseInt(document.getElementById('secondsInput').value) || 0;
+      const totalMilliseconds = (hours * 3600 + minutes * 60 + seconds) * 1000;
+
+      if (totalMilliseconds <= 0) {
+        document.getElementById('display').textContent = "Geçerli bir süre girin!";
+        return;
+      }
+
+      endTime = Date.now() + totalMilliseconds;
+
+      timer = setInterval(() => {
+        const remaining = endTime - Date.now();
+
+        if (remaining <= 0) {
+          clearInterval(timer);
+          document.getElementById('display').textContent = "Süre doldu!";
+        } else {
+          updateDisplay(remaining);
+        }
+      }, 10);
+    }
+
+    function updateDisplay(ms) {
+      const hours = Math.floor(ms / 3600000);
+      const minutes = Math.floor((ms % 3600000) / 60000);
+      const seconds = Math.floor((ms % 60000) / 1000);
+      const milliseconds = Math.floor(ms % 1000);
+
+      document.getElementById('display').textContent =
+        `${String(hours).padStart(2, '0')}:` +
+        `${String(minutes).padStart(2, '0')}:` +
+        `${String(seconds).padStart(2, '0')}:` +
+        `${String(milliseconds).padStart(3, '0')}`;
+    }
+  </script>
+
+</body>
+
+</html>
