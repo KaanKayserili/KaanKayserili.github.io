@@ -1,4 +1,4 @@
-# KaanKayserili.com - Kişisel Web Sitesi
+# KaanKayserili.github.io - Kişisel Web Sitesi
 
 Modern, responsive ve kullanıcı dostu kişisel web sitesi projesi.
 
@@ -15,7 +15,7 @@ Modern, responsive ve kullanıcı dostu kişisel web sitesi projesi.
 ## 📁 Dosya Yapısı
 
 ```
-KaanKayserili.com/
+KaanKayserili.github.io/
 ├── index.html          # Ana HTML dosyası
 ├── styles.css          # CSS stilleri
 ├── script.js           # JavaScript fonksiyonları
@@ -112,11 +112,12 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 ## 📞 İletişim
 
-- **Website**: [kaankayserili.com](https://kaankayserili.com)
-- **Email**: kaan@kaankayserili.com
+- **Website**: [kaankayserili.github.io](https://kaankayserili.github.io)
+- **Email**: knkayserili@gmail.com
 - **LinkedIn**: [linkedin.com/in/kaankayserili](https://linkedin.com/in/kaankayserili)
 - **GitHub**: [github.com/kaankayserili](https://github.com/kaankayserili)
 
 ---
+
 
 **Not**: Bu proje eğitim amaçlı oluşturulmuştur. Ticari kullanım için gerekli lisansları kontrol edin. 
